@@ -1,0 +1,96 @@
+<a routerLink=".." class="btn btn-sm btn-primary mb-4">&larr; Back</a>
+<app-load-spinner *ngIf="showSpinner"></app-load-spinner>
+<div class="container">
+	<ngb-alert *ngIf="errorMessage" [type]="'danger'" (closed)="errorMessage = null">
+		{{ errorMessage }}
+	</ngb-alert>
+	<ngb-alert *ngIf="updateSuccessMessage" [type]="'success'" (closed)="updateSuccessMessage = null">
+		{{ updateSuccessMessage }}
+	</ngb-alert>
+	<form *ngIf="!showSpinner && user">
+		<div class="form-group w-50 mb-3">
+			<label for="first-name">First Name</label>
+			<input type="text" class="form-control" id="first-name" placeholder="Enter First Name" [(ngModel)]="user.firstName"
+				   name="firstName">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="last-name">Last Name</label>
+			<input type="text" class="form-control" id="last-name" placeholder="Enter First Name" [(ngModel)]="user.lastName"
+				   name="lastName">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="email-address">Email address</label>
+			<input type="email" class="form-control" id="email-address" placeholder="Enter email" [(ngModel)]="user.email"
+				   name="email">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="subscription">Subscription</label>
+			<select class="form-select" [(ngModel)]="user.subscription" id="subscription" name="subscription">
+				<option *ngFor="let subscription of subscriptions" [ngValue]="subscription">
+					{{ subscription }}
+				</option>
+			</select>
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="subscription-expiration">Subscription Expiration</label>
+			<input
+				id="subscription-expiration"
+				type="date"
+				class="form-control"
+				placeholder="yyyy-mm-dd"
+				name="datePicker"
+				[ngModel]="user.subscriptionExpirationDate | date:'yyyy-MM-dd'"
+				(ngModelChange)="user.subscriptionExpirationDate = $event"
+			/>
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="mobile-phone">Mobile Phone</label>
+			<input type="text" class="form-control" id="mobile-phone" placeholder="Enter mobile phone"
+				   [(ngModel)]="user.mobilePhone"
+				   name="mobilePhone">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="country">Country</label>
+			<input type="text" class="form-control" id="country" placeholder="Enter Country" [(ngModel)]="user.country"
+				   name="country">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="company">Company</label>
+			<input type="text" class="form-control" id="company" placeholder="Enter Company" [(ngModel)]="user.company"
+				   name="company">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="titles">Titles</label>
+			<input type="text" class="form-control" id="titles" placeholder="Enter Titles" [(ngModel)]="user.titles"
+				   name="titles">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="industry">Industry</label>
+			<input type="text" class="form-control" id="industry" placeholder="Enter Industry" [(ngModel)]="user.industry"
+				   name="industry">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="activation-count">Activation Count</label>
+			<input type="number" class="form-control" id="activation-count" placeholder="Enter Activation Count"
+				   [(ngModel)]="user.activationCount"
+				   min="0"
+				   name="activationCount">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="data-table-size">Data Table Size</label>
+			<input type="number" class="form-control" id="data-table-size" placeholder="Enter Data Table Size"
+				   [(ngModel)]="user.dataTableSize"
+				   min="0"
+				   name="dataTableSize">
+		</div>
+		<div class="form-group w-50 mb-3">
+			<label for="ai-tokens">AI Tokens</label>
+			<input type="number" class="form-control" id="ai-tokens" placeholder="Enter AI Tokens" [(ngModel)]="user.aiTokens"
+				   min="0"
+				   name="aiTokens">
+		</div>
+		<button type="submit" class="btn btn-primary mb-3" (click)="updateUser()">
+			Update
+		</button>
+	</form>
+</div>

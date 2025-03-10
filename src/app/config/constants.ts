@@ -1,0 +1,6 @@
+export const USER_AUTHENTICATION_TOKEN_KEY = 'USER_AUTHENTICATION_TOKEN_KEY';
+export const INPUT_DATE_TIME_FORMAT = 'yyyy-MM-ddTHH:mm';
+export const DISPLAY_DATE_FORMAT = 'MMM d, y';
+export const DISPLAY_TIME_FORMAT = 'HH:mm';
+export const DISPLAY_DATE_TIME_FORMAT = `${DISPLAY_DATE_FORMAT} ${DISPLAY_TIME_FORMAT}`;
+export const ID_NOT_VALID_MESSAGE = 'Id is not valid';

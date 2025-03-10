@@ -1,0 +1,14 @@
+<nav class="navbar bg-body-tertiary">
+	<div class="container-fluid">
+		<img src="/assets/images/SkySuite-Logo.png" class="logo" alt="Logo">
+		<div ngbDropdown class="d-inline-block">
+			<div type="button" ngbDropdownToggle>
+				{{ getFirstName() }} {{ getLastName() }}
+			</div>
+			<div ngbDropdownMenu>
+				<button ngbDropdownItem (click)="logout()">Logout</button>
+			</div>
+		</div>
+	</div>
+</nav>
+

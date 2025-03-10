@@ -1,0 +1,11 @@
+.wrapper {
+	height: 100%;
+	min-height: 500px;
+
+	.card {
+		position: relative;
+		padding: 1.5em;
+		width: 350px;
+		margin: 50px auto;
+	}
+}
