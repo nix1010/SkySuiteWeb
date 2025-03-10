@@ -10,7 +10,7 @@ import {finalize, tap} from "rxjs/operators";
 import {forkJoin} from "rxjs";
 import {getErrorResponseMessage} from "../../utils/utils";
 import {LoadSpinnerComponent} from "../load-spinner/load-spinner.component";
-import {NgbAlert, NgbDatepicker, NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
+import {NgbAlert} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
     selector: 'app-user',
@@ -20,8 +20,6 @@ import {NgbAlert, NgbDatepicker, NgbInputDatepicker} from "@ng-bootstrap/ng-boot
         RouterLink,
         NgForOf,
         LoadSpinnerComponent,
-        NgbDatepicker,
-        NgbInputDatepicker,
         NgbAlert,
         DatePipe
     ],
