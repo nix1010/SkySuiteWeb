@@ -4,6 +4,8 @@ import {UserOverview} from "../models/user-overview.model";
 import {UserDetail} from "../models/user-detail.model";
 import {Observable} from "rxjs";
 import {PagedResponse} from "../models/paged-response.model";
+import { SubscriptionsCount } from "../models/subscription-status.model";
+import { FeatureUsage } from "../models/feature-usage.model";
 
 @Injectable()
 export class UserService {
@@ -22,11 +24,25 @@ export class UserService {
             }
         });
     }
-
+    public getUsersDetails(pageNumber: number, pageSize: number): Observable<PagedResponse<UserDetail>> {
+        return this.httpClient.get<PagedResponse<UserDetail>>(this.baseUrl, {
+            params: {
+                pageNumber: pageNumber,
+                pageSize: pageSize
+            }
+        });
+    }
+    public getFeaturesUsage(pageNumber: number, pageSize: number): Observable<PagedResponse<FeatureUsage>> {
+        return this.httpClient.get<PagedResponse<FeatureUsage>>(`${this.baseUrl}/feature-usage`, {
+            params: {
+                pageNumber: pageNumber,
+                pageSize: pageSize
+            }
+        });
+    }
     public getUser(userId: number): Observable<UserDetail> {
         return this.httpClient.get<UserDetail>(`${this.baseUrl}/${userId}`);
     }
-
     public updateUser(userId: number, user: UserDetail): Observable<void> {
         return this.httpClient.post<void>(`${this.baseUrl}/${userId}`, user);
     }

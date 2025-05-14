@@ -12,7 +12,7 @@ import {MainLayoutComponent} from "./components/main-layout/main-layout.componen
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: ComponentRoutes.DASHBOARD,
+        redirectTo: ComponentRoutes.USERS,
         pathMatch: 'full'
     },
     {

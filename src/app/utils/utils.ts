@@ -13,7 +13,7 @@ export function getErrorResponseMessage(error: HttpErrorResponse): string | null
     if (error.error?.message) {
         return error.error.message;
     }
-
+    console.log(error);
     return 'Unknown error';
 }
 

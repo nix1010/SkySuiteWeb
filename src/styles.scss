@@ -2,3 +2,10 @@
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
+html, body {
+    height: 100%;
+    max-height: 100vh !important;
+    margin: 0;
+    padding: 0;
+    color: #444444;
+}
