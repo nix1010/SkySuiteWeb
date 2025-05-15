@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { prodEnvironment} from '../../environments/environment'
+import { devEnvironment } from '../../environments/environment.development';
 
 @Injectable({ providedIn: 'root' })
 export class AppEnvironmentService {
@@ -12,8 +14,8 @@ export class AppEnvironmentService {
 
   public getApiUrl(): string {
     return this.isProd.value
-      ? 'https://skysuite-api-production.purpleground-18b21c29.eastus.azurecontainerapps.io'
-      : 'https://skysuite-api-dev.wonderfulriver-db6cedb8.eastus.azurecontainerapps.io';
+      ? prodEnvironment.apiUrl
+      : devEnvironment.apiUrl;
   }
 
   getAppEnvNotifier(): Observable<void> {
