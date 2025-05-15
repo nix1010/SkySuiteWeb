@@ -6,6 +6,7 @@ import {ComponentRoutes} from "../../config/routes";
 import {UserDetail} from "../../models/user-detail.model";
 import {UserService} from "../../services/user.service";
 import {AuthenticatedUser} from "../../models/authentication/authenticated-user.model";
+import { AppEnvironmentService } from '../../services/apiEnvironment.service';
 
 @Component({
     selector: 'app-nav-bar',
@@ -22,10 +23,11 @@ import {AuthenticatedUser} from "../../models/authentication/authenticated-user.
 })
 export class NavBarComponent {
     private currentUser: UserDetail;
-
+    protected isProd:boolean = false;
     constructor(
         private readonly authenticationService: AuthenticationService,
         private readonly userService: UserService,
+        private readonly appEnvService : AppEnvironmentService,
         private readonly router: Router
     ) {
         const authenticatedUser: AuthenticatedUser | null = this.authenticationService.getAuthenticatedUser();
@@ -36,13 +38,22 @@ export class NavBarComponent {
     }
 
     getFirstName(): string | undefined {
-        return this.currentUser?.firstName;
+        return this.currentUser?.firstName 
+        ? this.currentUser.firstName.charAt(0).toUpperCase() + this.currentUser.firstName.slice(1) 
+        : '';
     }
 
     getLastName(): string | undefined {
-        return this.currentUser?.lastName
+        return this.currentUser?.lastName 
+        ? this.currentUser.lastName.charAt(0).toUpperCase() + this.currentUser.lastName.slice(1) 
+        : '';
     }
-
+    getInitialze() : string | undefined{
+        if (this.currentUser?.lastName && this.currentUser?.firstName) {
+            return this.currentUser.firstName.charAt(0).toUpperCase() + this.currentUser.lastName.charAt(0).toUpperCase();
+        }
+return '';
+    }
     isAuthenticated(): boolean {
         return this.authenticationService.isAuthenticated();
     }
@@ -50,6 +61,23 @@ export class NavBarComponent {
     logout(): void {
         this.authenticationService.logout();
         this.router.navigate([ComponentRoutes.LOGIN]).then();
+    }
+
+    setActivePage(page: string) : string{
+        if(this.router.url === page)
+         return 'nav-link active-nav-link';
+        else return 'nav-link';
+    }
+    onProdChange(event: any): void {
+
+        if(event.target.id == 'prod'){
+            this.isProd = event.target.checked;
+        }else {
+            this.isProd = false;
+        }
+  
+        this.appEnvService.setAppEnvironment(this.isProd);
+        
     }
 }
 

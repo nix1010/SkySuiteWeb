@@ -14,7 +14,8 @@ export class LoadSpinnerComponent {
 
   @Input()
   size: string;
-
+  @Input()
+  message:string = "Loading please wait...";
   constructor() { }
 }
 

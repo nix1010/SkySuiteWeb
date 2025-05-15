@@ -1,14 +1,141 @@
 <nav class="navbar bg-body-tertiary">
-	<div class="container-fluid">
-		<img src="/assets/images/SkySuite-Logo.png" class="logo" alt="Logo">
-		<div ngbDropdown class="d-inline-block">
-			<div type="button" ngbDropdownToggle>
-				{{ getFirstName() }} {{ getLastName() }}
-			</div>
-			<div ngbDropdownMenu>
-				<button ngbDropdownItem (click)="logout()">Logout</button>
-			</div>
-		</div>
-	</div>
-</nav>
+  <div class="container-fluid px-3 py-1">
+    <a
+      class="btn btn-light"
+      data-bs-toggle="offcanvas"
+      href="#sidemenu"
+      role="button"
+      aria-controls="sidemenu"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        fill="currentColor"
+        class="bi bi-list"
+        viewBox="-2 0 32 32"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M2.5 24a.5.5 0 0 1 .5-.5h20a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-8a.5.5 0 0 1 .5-.5h20a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-8a.5.5 0 0 1 .5-.5h20a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
+        />
+      </svg>
+    </a>
+    <img
+      src="/assets/images/SkySuite-Logo.png"
+      class="logo"
+      alt="Logo"
+      height="30"
+      class="d-block mx-auto"
+    />
 
+    <div class="hstack">
+      <div class="btn-group me-3" role="group">
+        <input
+          type="radio"
+          class="btn-check"
+          name="env"
+          id="prod"
+          (change)="onProdChange($event)"
+          [checked]="isProd"
+        />
+        <label class="btn btn-outline-secondary" for="prod">Production</label>
+        <input
+          type="radio"
+          class="btn-check"
+          name="env"
+          id="dev"
+          checked
+          (change)="onProdChange($event)"
+        />
+        <label class="btn btn-outline-secondary" for="dev">Development</label>
+      </div>
+
+      <div ngbDropdown class="dropdown">
+        <a
+          class="nav-link nav-profile d-flex align-items-center pe-0"
+          ngbDropdownToggle
+        >
+          <div
+            class="roundBorder d-flex justify-content-center align-items-center"
+          >
+            <span class="fw-bold text-white">{{ getInitialze() }}</span>
+          </div>
+          <span class="d-none d-md-block ps-2 me-1 fw-bold">
+            {{ getFirstName() }} {{ getLastName() }}
+          </span>
+        </a>
+        <ul
+          ngbDropdownMenu
+          class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
+        >
+          <li>
+            <button
+              class="dropdown-item d-flex align-items-center"
+              (click)="logout()"
+            >
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="sidemenu"
+    aria-labelledby="sidemenuLabel"
+  >
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title bold" id="sidemenuLabel">Menu</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="offcanvas-body sidebar">
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a [class]="setActivePage('/dashboard')" href="/dashboard">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-stack"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="m14.12 10.163 1.715.858c.22.11.22.424 0 .534L8.267 15.34a.6.6 0 0 1-.534 0L.165 11.555a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0l5.317-2.66zM7.733.063a.6.6 0 0 1 .534 0l7.568 3.784a.3.3 0 0 1 0 .535L8.267 8.165a.6.6 0 0 1-.534 0L.165 4.382a.299.299 0 0 1 0-.535z"
+              />
+              <path
+                d="m14.12 6.576 1.715.858c.22.11.22.424 0 .534l-7.568 3.784a.6.6 0 0 1-.534 0L.165 7.968a.299.299 0 0 1 0-.534l1.716-.858 5.317 2.659c.505.252 1.1.252 1.604 0z"
+              />
+            </svg>
+            <span class="ms-2">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a [class]="setActivePage('/users')" href="/users">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-people-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"
+              />
+            </svg>
+            <span class="ms-2">Users</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

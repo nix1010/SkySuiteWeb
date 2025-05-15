@@ -2,7 +2,8 @@ import {UserOverview} from "./user-overview.model";
 
 export class UserDetail extends UserOverview {
     subscription: number;
-    subscriptionExpirationDate: Date;
+    subscriptionExpirationDate: string;
+    creationDate:string;
     mobilePhone: string;
     country: string;
     company: string;
@@ -11,4 +12,6 @@ export class UserDetail extends UserOverview {
     activationCount: number;
     dataTableSize: number;
     aiTokens: number;
+
+
 }
