@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { prodEnvironment} from '../../environments/environment'
-import { devEnvironment } from '../../environments/environment.development';
+import { environment} from '../../environments/environment'
 
 @Injectable({ providedIn: 'root' })
 export class AppEnvironmentService {
@@ -14,8 +13,8 @@ export class AppEnvironmentService {
 
   public getApiUrl(): string {
     return this.isProd.value
-      ? prodEnvironment.apiUrl
-      : devEnvironment.apiUrl;
+      ? environment.apiUrlProd
+      : environment.apiUrl;
   }
 
   getAppEnvNotifier(): Observable<void> {
