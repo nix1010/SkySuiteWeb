@@ -45,7 +45,7 @@
           class="btn-check"
           name="env"
           id="dev"
-          checked
+          [checked]="!isProd"
           (change)="onProdChange($event)"
         />
         <label class="btn btn-outline-secondary" for="dev">Development</label>

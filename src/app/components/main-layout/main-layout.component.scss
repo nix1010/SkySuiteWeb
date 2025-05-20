@@ -1,3 +1,22 @@
 .main-content {
-	margin: 2em 2em 0;
+	margin: 1em 1em 0;
 }
+:host {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+  }
+  
+  .main-content {
+	flex: 1;
+	overflow: hidden; /* Prevent scrolling at this level */
+	position: relative;
+  }
+  
+  /* Make sure the router outlet takes full height */
+  ::ng-deep router-outlet + * {
+	display: block;
+	height: 100%;
+	overflow: hidden;
+	overflow-x:hidden ; /* Allow content inside component to scroll */
+  }

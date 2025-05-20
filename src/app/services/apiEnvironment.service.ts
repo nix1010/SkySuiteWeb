@@ -4,7 +4,7 @@ import { environment} from '../../environments/environment'
 
 @Injectable({ providedIn: 'root' })
 export class AppEnvironmentService {
-  private isProd = new BehaviorSubject<boolean>(false);
+  private isProd = new BehaviorSubject<boolean>(true);
   private applyEnvTrigger = new Subject<void>();
   public setAppEnvironment(prodEnv: boolean): void {
     this.isProd.next(prodEnv);

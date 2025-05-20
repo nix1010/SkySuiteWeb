@@ -23,7 +23,7 @@ import { AppEnvironmentService } from '../../services/apiEnvironment.service';
 })
 export class NavBarComponent {
     private currentUser: UserDetail;
-    protected isProd:boolean = false;
+    protected isProd:boolean = true;
     constructor(
         private readonly authenticationService: AuthenticationService,
         private readonly userService: UserService,

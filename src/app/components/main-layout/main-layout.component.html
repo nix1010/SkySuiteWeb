@@ -1,4 +1,8 @@
-<app-nav-bar></app-nav-bar>
-<div class="main-content">
-	<router-outlet></router-outlet>
+<div class="d-flex flex-column h-100">
+  <div>
+    <app-nav-bar></app-nav-bar>
+  </div>
+  <div class="flex-grow-1 d-flex flex-column main-content">
+    <router-outlet></router-outlet>
+  </div>
 </div>
