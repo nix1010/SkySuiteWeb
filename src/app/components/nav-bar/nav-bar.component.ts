@@ -36,7 +36,9 @@ export class NavBarComponent {
                 .subscribe((user: UserDetail) => this.currentUser = user);
         }
     }
-
+    ngOnInit(): void {
+this.isProd = this.appEnvService.getIsProdValue();
+    }
     getFirstName(): string | undefined {
         return this.currentUser?.firstName 
         ? this.currentUser.firstName.charAt(0).toUpperCase() + this.currentUser.firstName.slice(1) 

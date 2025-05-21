@@ -10,7 +10,8 @@ import {UserAuthentication} from '../models/authentication/user-credentials.mode
 import {DecodedToken} from '../interfaces/decoded-token.interface';
 import {AuthenticationResponse} from '../models/authentication/authentication-response.model';
 import { AppEnvironmentService } from './apiEnvironment.service';
-
+import { Router } from '@angular/router';
+import {ComponentRoutes} from "../config/routes";
 
 @Injectable()
 export class AuthenticationService {
@@ -20,19 +21,16 @@ export class AuthenticationService {
 
     constructor(
         private readonly httpClient: HttpClient,
-        private readonly apiEnvironmentService: AppEnvironmentService
+        private readonly apiEnvironmentService: AppEnvironmentService,
+        private readonly router: Router
     ) {
         this.setAuthenticatedUserFromStorage();
         this.apiEnvironmentService.getAppEnvNotifier().subscribe(() => this.setTokenKey());
     }
     setTokenKey(): void {
-        let isProd = this.apiEnvironmentService.getIsProdValue();
-        if(isProd){
-            localStorage.setItem(AUTHENTICATED_PROD_USER_KEY, JSON.stringify(this.authenticatedUser));
-        }else {
-            localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(this.authenticatedUser));
-        }
         this.setAuthenticatedUserFromStorage();
+        console.log(this.authenticatedUser);
+        this.checkAuthentication();
     }
 
 
@@ -61,19 +59,23 @@ export class AuthenticationService {
     }
 
     private setAuthenticatedUser(authenticationResponse: AuthenticationResponse): void {
+        let isProd = this.apiEnvironmentService.getIsProdValue();
         this.authenticatedUser = new AuthenticatedUser();
         this.authenticatedUser.userId = authenticationResponse.userId;
         this.authenticatedUser.token = authenticationResponse.accessToken.token;
         this.setDecodedToken();
-        this.setTokenKey();
+        localStorage.setItem(isProd ? AUTHENTICATED_PROD_USER_KEY : AUTHENTICATED_USER_KEY, JSON.stringify(this.authenticatedUser));
     }
 
     private setAuthenticatedUserFromStorage(): void {
         let isProd = this.apiEnvironmentService.getIsProdValue();
         let authenticatedUserJSON: string | null = localStorage.getItem(isProd ? AUTHENTICATED_PROD_USER_KEY  : AUTHENTICATED_USER_KEY);
+        console.log(authenticatedUserJSON)
         if (authenticatedUserJSON) {
             this.authenticatedUser = JSON.parse(authenticatedUserJSON);
             this.setDecodedToken();
+        }else {
+            this.authenticatedUser = null;
         }
     }
 
@@ -98,5 +100,12 @@ export class AuthenticationService {
             return true;
         }
         return false;
+    }
+    checkAuthentication() : void{
+            if(this.authenticatedUser === null){
+                this.router.navigate([ComponentRoutes.LOGIN], {
+                    state: { requestedUrl: this.router.url }
+                  });
+            }
     }
 }

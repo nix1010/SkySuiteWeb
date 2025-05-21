@@ -12,7 +12,7 @@ export class AppEnvironmentService {
 
   public setAppEnvironment(prodEnv: boolean): void {
     this.isProd.next(prodEnv);
-    this.applyEnvTrigger.next();
+    this.applyEnvTrigger.next();    
   }
 
   public getApiUrl(): string {
