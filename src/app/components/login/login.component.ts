@@ -7,6 +7,7 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {UserAuthentication} from "../../models/authentication/user-credentials.model";
 import {getErrorResponseMessage} from "../../utils/utils";
 import {FormsModule} from "@angular/forms";
+import { AppEnvironmentService } from '../../services/apiEnvironment.service';
 
 @Component({
     selector: 'app-login',
@@ -29,7 +30,8 @@ export class LoginComponent implements OnInit {
     constructor(
         private readonly authenticationService: AuthenticationService,
         private readonly router: Router,
-        private readonly location: Location
+        private readonly location: Location,
+        private readonly api: AppEnvironmentService
     ) { }
 
     ngOnInit(): void {
@@ -43,7 +45,7 @@ export class LoginComponent implements OnInit {
 
         this.loginProcess = true;
         this.errorMessage = null;
-
+console.log(this.api.getApiUrl())
         this.authenticationService.authenticate(this.user)
             .pipe(finalize(() => this.loginProcess = false))
             .subscribe({

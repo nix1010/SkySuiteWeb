@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment} from '../../environments/environment'
+import { AuthGuardService } from './auth-guard.service';
 
 @Injectable({ providedIn: 'root' })
 export class AppEnvironmentService {
+
   private isProd = new BehaviorSubject<boolean>(true);
   private applyEnvTrigger = new Subject<void>();
+
+
   public setAppEnvironment(prodEnv: boolean): void {
     this.isProd.next(prodEnv);
     this.applyEnvTrigger.next();
@@ -16,7 +20,9 @@ export class AppEnvironmentService {
       ? environment.apiUrlProd
       : environment.apiUrl;
   }
-
+  public getIsProdValue() : boolean{
+    return this.isProd.value;
+  }
   getAppEnvNotifier(): Observable<void> {
     return this.applyEnvTrigger.asObservable();
   }
