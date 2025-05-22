@@ -1,8 +1,8 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {Observable} from 'rxjs';
-import {tap} from 'rxjs/operators';
+import {Observable, throwError} from 'rxjs';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {USER_AUTHENTICATION_TOKEN_KEY as AUTHENTICATED_USER_KEY,USER_AUTHENTICATION_PRODUCTION_TOKEN_KEY as AUTHENTICATED_PROD_USER_KEY} from '../config/constants';
 import {AuthenticatedUser} from '../models/authentication/authenticated-user.model';
 import {Role} from '../models/authentication/role.model';
@@ -12,6 +12,7 @@ import {AuthenticationResponse} from '../models/authentication/authentication-re
 import { AppEnvironmentService } from './apiEnvironment.service';
 import { Router } from '@angular/router';
 import {ComponentRoutes} from "../config/routes";
+import { UserDetail } from '../models/user-detail.model';
 
 @Injectable()
 export class AuthenticationService {
@@ -29,23 +30,35 @@ export class AuthenticationService {
     }
     setTokenKey(): void {
         this.setAuthenticatedUserFromStorage();
-        console.log(this.authenticatedUser);
         this.checkAuthentication();
     }
 
 
     authenticate(userAuthentication: UserAuthentication): Observable<AuthenticationResponse> {
-        return this.httpClient.post<AuthenticationResponse>('users/authenticate', userAuthentication)
-            .pipe(
-                tap((authenticationResponse: AuthenticationResponse) => {
-                    this.setAuthenticatedUser(authenticationResponse);
+        return this.httpClient.post<AuthenticationResponse>('users/authenticate', userAuthentication).pipe(
+            switchMap((authResponse: AuthenticationResponse) => {
+              this.setAuthenticatedUser(authResponse);
+              return this.httpClient.get<UserDetail>(`users/${authResponse.userId}`).pipe(
+                map(() => authResponse),
+                catchError(err => {
+                  return throwError(() => err);
                 })
-            )
+              )
+            }),
+            tap(authResponse => {
+                let isProd = this.apiEnvironmentService.getIsProdValue();
+                this.logout(isProd,!isProd);
+                this.setAuthenticatedUser(authResponse);
+            })
+          );
     }
-
-    logout(): void {
-        localStorage.removeItem(AUTHENTICATED_PROD_USER_KEY);
-        localStorage.removeItem(AUTHENTICATED_USER_KEY);
+    logout(removeProd: boolean = true,removeDev: boolean = true): void {
+        if(removeProd){
+            localStorage.removeItem(AUTHENTICATED_PROD_USER_KEY);
+        }
+        if(removeDev){
+            localStorage.removeItem(AUTHENTICATED_USER_KEY);
+        }
         this.authenticatedUser = null;
         this.decodedToken = null;
     }
@@ -103,9 +116,23 @@ export class AuthenticationService {
     }
     checkAuthentication() : void{
             if(this.authenticatedUser === null){
-                this.router.navigate([ComponentRoutes.LOGIN], {
-                    state: { requestedUrl: this.router.url }
-                  });
+              this.navigateToLogin();
+            }else {
+                try{
+                  this.httpClient.get<UserDetail>(`users/${this.authenticatedUser.userId}`);
+                }catch(err){
+                    let responseError = err as HttpErrorResponse;
+                    if(responseError){
+                        let isProd = this.apiEnvironmentService.getIsProdValue();
+                        this.logout(isProd,!isProd);
+                        this.navigateToLogin();
+                    }
+                }
             }
+    }
+    navigateToLogin() : void{
+        this.router.navigate([ComponentRoutes.LOGIN], {
+            state: { requestedUrl: this.router.url }
+          });
     }
 }

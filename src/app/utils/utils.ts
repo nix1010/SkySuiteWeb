@@ -1,7 +1,7 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {Subscription} from 'rxjs';
 
-export function getErrorResponseMessage(error: HttpErrorResponse): string | null {
+export function getErrorResponseMessage(error: HttpErrorResponse,isProd : boolean = true): string | null {
     if (!error) {
         return null;
     }
@@ -9,7 +9,10 @@ export function getErrorResponseMessage(error: HttpErrorResponse): string | null
     if (error.status === 0) {
         return "Can't reach server right now, please try again later";
     }
-
+    if(error.status === 403){
+        return isProd ? "You may be logged in with development credentials. Please log in again using your production account"
+                      : "You may be logged in with production credentials. Please log in again using your development account"
+    }
     if (error.error?.message) {
         return error.error.message;
     }
