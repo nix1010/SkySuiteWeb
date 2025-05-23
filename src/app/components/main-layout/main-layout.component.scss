@@ -9,14 +9,5 @@
   
   .main-content {
 	flex: 1;
-	overflow: hidden; /* Prevent scrolling at this level */
 	position: relative;
-  }
-  
-  /* Make sure the router outlet takes full height */
-  ::ng-deep router-outlet + * {
-	display: block;
-	height: 100%;
-	overflow: hidden;
-	overflow-x:hidden ; /* Allow content inside component to scroll */
   }
