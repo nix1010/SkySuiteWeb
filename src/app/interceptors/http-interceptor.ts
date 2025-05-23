@@ -16,6 +16,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         let authenticatedUser: AuthenticatedUser | null = this.authenticationService.getAuthenticatedUser();
         let headers: HttpHeaders = request.headers;
         headers = headers.set('Authorization', `Bearer ${authenticatedUser?.token}`);
+        console.log(`${environment.apiUrl}/${URI_PREFIX}/${request.url}`);
         const updatedRequest = request.clone({
             url: `${environment.apiUrl}/${URI_PREFIX}/${request.url}`,
             headers: headers
