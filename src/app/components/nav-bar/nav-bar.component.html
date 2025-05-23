@@ -28,57 +28,33 @@
       height="30"
       class="d-block mx-auto"
     />
-
-    <div class="hstack">
-      <div class="btn-group me-3" role="group">
-        <input
-          type="radio"
-          class="btn-check"
-          name="env"
-          id="prod"
-          (change)="onProdChange($event)"
-          [checked]="isProd"
-        />
-        <label class="btn btn-outline-secondary" for="prod">Production</label>
-        <input
-          type="radio"
-          class="btn-check"
-          name="env"
-          id="dev"
-          [checked]="!isProd"
-          (change)="onProdChange($event)"
-        />
-        <label class="btn btn-outline-secondary" for="dev">Development</label>
-      </div>
-
-      <div ngbDropdown class="dropdown">
-        <a
-          class="nav-link nav-profile d-flex align-items-center pe-0"
-          ngbDropdownToggle
+    <div ngbDropdown class="dropdown">
+      <a
+        class="nav-link nav-profile d-flex align-items-center pe-0"
+        ngbDropdownToggle
+      >
+        <div
+          class="roundBorder d-flex justify-content-center align-items-center"
         >
-          <div
-            class="roundBorder d-flex justify-content-center align-items-center"
+          <span class="fw-bold text-white">{{ getInitialze() }}</span>
+        </div>
+        <span class="d-none d-md-block ps-2 me-1 fw-bold">
+          {{ getFirstName() }} {{ getLastName() }}
+        </span>
+      </a>
+      <ul
+        ngbDropdownMenu
+        class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
+      >
+        <li>
+          <button
+            class="dropdown-item d-flex align-items-center"
+            (click)="logout()"
           >
-            <span class="fw-bold text-white">{{ getInitialze() }}</span>
-          </div>
-          <span class="d-none d-md-block ps-2 me-1 fw-bold">
-            {{ getFirstName() }} {{ getLastName() }}
-          </span>
-        </a>
-        <ul
-          ngbDropdownMenu
-          class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile"
-        >
-          <li>
-            <button
-              class="dropdown-item d-flex align-items-center"
-              (click)="logout()"
-            >
-              Logout
-            </button>
-          </li>
-        </ul>
-      </div>
+            Logout
+          </button>
+        </li>
+      </ul>
     </div>
   </div>
   <div

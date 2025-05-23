@@ -5,22 +5,19 @@ import {AuthenticatedUser} from '../models/authentication/authenticated-user.mod
 import {AuthenticationService} from '../services/authentication.service';
 import {environment} from "../../environments/environment";
 import {URI_PREFIX} from "../config/routes";
-import { AppEnvironmentService } from '../services/apiEnvironment.service';
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
 
-    constructor(private readonly authenticationService: AuthenticationService,
-                private readonly appEnvService: AppEnvironmentService
+    constructor(private readonly authenticationService: AuthenticationService
     ) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let authenticatedUser: AuthenticatedUser | null = this.authenticationService.getAuthenticatedUser();
         let headers: HttpHeaders = request.headers;
-        let fullUrl : string = `${this.appEnvService.getApiUrl()}/${URI_PREFIX}/${request.url}`;
         headers = headers.set('Authorization', `Bearer ${authenticatedUser?.token}`);
         const updatedRequest = request.clone({
-            url: fullUrl,
+            url: `${environment.apiUrl}/${URI_PREFIX}/${request.url}`,
             headers: headers
         });
         return next.handle(updatedRequest);

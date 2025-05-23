@@ -6,7 +6,6 @@ import {ComponentRoutes} from "../../config/routes";
 import {UserDetail} from "../../models/user-detail.model";
 import {UserService} from "../../services/user.service";
 import {AuthenticatedUser} from "../../models/authentication/authenticated-user.model";
-import { AppEnvironmentService } from '../../services/apiEnvironment.service';
 
 @Component({
     selector: 'app-nav-bar',
@@ -23,11 +22,9 @@ import { AppEnvironmentService } from '../../services/apiEnvironment.service';
 })
 export class NavBarComponent {
     private currentUser: UserDetail;
-    protected isProd:boolean = true;
     constructor(
         private readonly authenticationService: AuthenticationService,
         private readonly userService: UserService,
-        private readonly appEnvService : AppEnvironmentService,
         private readonly router: Router
     ) {
         const authenticatedUser: AuthenticatedUser | null = this.authenticationService.getAuthenticatedUser();
@@ -35,9 +32,6 @@ export class NavBarComponent {
             userService.getUser(authenticatedUser.userId)
                 .subscribe((user: UserDetail) => this.currentUser = user);
         }
-    }
-    ngOnInit(): void {
-this.isProd = this.appEnvService.getIsProdValue();
     }
     getFirstName(): string | undefined {
         return this.currentUser?.firstName 
@@ -66,20 +60,9 @@ return '';
     }
 
     setActivePage(page: string) : string{
-        if(this.router.url === page)
+        if(this.router.url.includes(page))
          return 'nav-link active-nav-link';
         else return 'nav-link';
-    }
-    onProdChange(event: any): void {
-
-        if(event.target.id == 'prod'){
-            this.isProd = event.target.checked;
-        }else {
-            this.isProd = false;
-        }
-  
-        this.appEnvService.setAppEnvironment(this.isProd);
-        
     }
 }
 

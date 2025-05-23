@@ -11,12 +11,11 @@ import {UserService} from "../../services/user.service";
 import { UserDetail } from '../../models/user-detail.model';
 import {PagedResponse} from "../../models/paged-response.model";
 import {LoadSpinnerComponent} from "../load-spinner/load-spinner.component";
-import {catchError, finalize, tap} from "rxjs/operators";
+import {catchError} from "rxjs/operators";
 import { SubscriptionsCount } from '../../models/subscription-status.model';
 import { SubscriptionService } from '../../services/subscription.service';
 import { SubscriptionType } from '../../models/subscription-type.model';
 import { FeatureUsage } from '../../models/feature-usage.model';
-import { AppEnvironmentService } from '../../services/apiEnvironment.service';
 import { AlertModalService } from '../../services/alert.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -39,7 +38,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class UsersComponent implements OnInit, OnDestroy {
     private routerEventsSubscription: Subscription;
-    private envSubscription : Subscription;
     public pagination: Pagination = new Pagination(1, 20, 0);
     public featurePagination: Pagination = new Pagination(1,200,0);
     protected errorMessage: string | null;
@@ -57,10 +55,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     private readonly usersPageSizeParam = 'usersPageSize';
     private readonly usersPageParam = 'usersPage';
     constructor(
-        private readonly authenticationService: AuthenticationService,
         private readonly userService: UserService,
         private readonly subsService : SubscriptionService,
-        private readonly appEnvService: AppEnvironmentService,
         private readonly alertService: AlertModalService,
         private readonly router: Router,
         private readonly activatedRoute: ActivatedRoute
@@ -72,11 +68,9 @@ export class UsersComponent implements OnInit, OnDestroy {
         this.loadingMessage = "Loading data please wait....";
         this.showSpinner = true;
         this.fetchAllData().then(() => this.showSpinner = false);
-        this.envSubscription = this.appEnvService.getAppEnvNotifier().subscribe(async () => await this.reload());
     }
     ngOnDestroy(): void {
         unsubscribeFrom(this.routerEventsSubscription);
-        unsubscribeFrom(this.envSubscription);
     }
     private async fetchAllData(): Promise<void>{
         try {
@@ -136,19 +130,6 @@ export class UsersComponent implements OnInit, OnDestroy {
         } catch (err) {
             this.errorMessage = getErrorResponseMessage(err as HttpErrorResponse);
         }
-    }
-    private async reload(): Promise<void> {
-        this.errorMessage = null;
-        this.users = [];
-        this.subsUsersCount = [];
-        this.featureUsage = [];
-        this.subscriptionTypes = {};
-        this.subsKeys = [];
-        this.modifiedUsers = [];
-        this.loadingMessage = "Loading data please wait...";
-        this.showSpinner = true;
-        await this.fetchAllData();
-        this.showSpinner = false;
     }
     private getSubBadge(name : string) : string {
         var badge = 'badge text-bg-info';

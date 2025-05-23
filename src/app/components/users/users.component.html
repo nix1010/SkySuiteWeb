@@ -114,6 +114,7 @@
               <td>
                 <div *ngIf="isEditing">
                   <input
+                    title="subscription expiration date"
                     type="date"
                     class="form-control"
                     [(ngModel)]="user.subscriptionExpirationDate"
@@ -140,6 +141,7 @@
               <td>
                 <div *ngIf="isEditing">
                   <input
+                    title="activation count"
                     type="number"
                     class="form-control"
                     [(ngModel)]="user.activationCount"

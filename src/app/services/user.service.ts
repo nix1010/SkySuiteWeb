@@ -4,7 +4,6 @@ import {UserOverview} from "../models/user-overview.model";
 import {UserDetail} from "../models/user-detail.model";
 import {Observable} from "rxjs";
 import {PagedResponse} from "../models/paged-response.model";
-import { SubscriptionsCount } from "../models/subscription-status.model";
 import { FeatureUsage } from "../models/feature-usage.model";
 
 @Injectable()
