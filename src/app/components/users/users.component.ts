@@ -107,7 +107,15 @@ export class UsersComponent implements OnInit, OnDestroy {
             const pageSize = this.getQueryParam(this.usersPageSizeParam,this.pagination.pageSize);
             const pagedUsers = await firstValueFrom(this.userService.getUsersDetails(currentPage ?? this.pagination.currentPage,pageSize ?? this.pagination.pageSize));
             this.setPagination<UserDetail>(this.pagination, pagedUsers);
-            this.users = pagedUsers.data;
+            pagedUsers.data.forEach(u => {
+                const date = new Date(u.subscriptionExpirationDate);
+                if (!isNaN(date.getTime())) {
+                  u.subscriptionExpirationDate = date.toISOString().split('T')[0];
+                } else {
+                  u.subscriptionExpirationDate = '';
+                }
+              });
+              this.users = pagedUsers.data;
         } catch (err) {
             this.errorMessage = getErrorResponseMessage(err as HttpErrorResponse);
         }
