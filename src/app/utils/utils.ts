@@ -1,5 +1,5 @@
-import {HttpErrorResponse} from '@angular/common/http';
-import {Subscription} from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 export function getErrorResponseMessage(error: HttpErrorResponse): string | null {
     if (!error) {
@@ -8,6 +8,14 @@ export function getErrorResponseMessage(error: HttpErrorResponse): string | null
 
     if (error.status === 0) {
         return "Can't reach server right now, please try again later";
+    }
+
+    if (error.status === 401) {
+        return "You must be authenticated to access this resource";
+    }
+
+    if (error.status === 403) {
+        return "You don't have access to this resource";
     }
 
     if (error.error?.message) {
