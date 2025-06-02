@@ -110,7 +110,7 @@
                   >
                 </div>
               </td>
-              <td>{{ user.creationDate }}</td>
+              <td>{{ user.creationDate | date: 'medium' }}</td>
               <td>
                 <div *ngIf="isEditing">
                   <input
@@ -119,7 +119,6 @@
                     class="form-control"
                     [(ngModel)]="user.subscriptionExpirationDate"
                     (ngModelChange)="changedUsers(user.id)"
-                    s
                   />
                 </div>
                 <div *ngIf="!isEditing" class="hstack">
