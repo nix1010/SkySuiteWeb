@@ -1,23 +1,20 @@
 import {Component, OnDestroy, OnInit } from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router, RouterLink} from "@angular/router";
-import {AuthenticationService} from "../../services/authentication.service";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {NgbAlert, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {NgForOf, NgIf,CommonModule } from "@angular/common";
 import {Pagination} from "../../models/page.model";
 import { FormsModule } from '@angular/forms';
 import {getErrorResponseMessage, unsubscribeFrom} from "../../utils/utils";
-import {firstValueFrom, forkJoin, Observable, of, Subscription} from "rxjs";
+import {firstValueFrom, forkJoin, of, Subscription} from "rxjs";
 import {UserService} from "../../services/user.service";
 import { UserDetail } from '../../models/user-detail.model';
 import {PagedResponse} from "../../models/paged-response.model";
 import {LoadSpinnerComponent} from "../load-spinner/load-spinner.component";
 import {catchError} from "rxjs/operators";
-import { SubscriptionsCount } from '../../models/subscription-status.model';
 import { SubscriptionService } from '../../services/subscription.service';
-import { SubscriptionType } from '../../models/subscription-type.model';
-import { FeatureUsage } from '../../models/feature-usage.model';
 import { AlertModalService } from '../../services/alert.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DESC_DIRECTION } from '../../config/constants';
 
 @Component({
     selector: 'app-users',
@@ -38,22 +35,20 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class UsersComponent implements OnInit, OnDestroy {
     private routerEventsSubscription: Subscription;
-    public pagination: Pagination = new Pagination(1, 20, 0);
-    public featurePagination: Pagination = new Pagination(1,200,0);
+    public pagination: Pagination = new Pagination(1, 2000000, 0);
     protected errorMessage: string | null;
     protected showSpinner: boolean;
     protected users: UserDetail[] = [];
     protected isEditing:boolean = false;
-    protected subsUsersCount : SubscriptionsCount[] = [];
     protected modifiedUsers:number[] =[];
-    protected featureUsage : FeatureUsage[] = [];
     protected loadingMessage:string = "Loading please wait...";
-    subscriptionTypes: { [key: number]: SubscriptionType } = {};
-    subsKeys: number[] = [];
-    private readonly featurePageSizeParam : string = 'featurePageSize';
-    private readonly featurePageParam = 'featurePage';
+    subscriptionTypes: { [key: string]: string } = {};
+    protected sortDirection : string = DESC_DIRECTION;
+    protected sortColumn : string = '';
     private readonly usersPageSizeParam = 'usersPageSize';
     private readonly usersPageParam = 'usersPage';
+    private readonly colsNameParam = 'col';
+    private readonly sortDirectionParams = 'direction';
     constructor(
         private readonly userService: UserService,
         private readonly subsService : SubscriptionService,
@@ -76,11 +71,27 @@ export class UsersComponent implements OnInit, OnDestroy {
         try {
             await Promise.allSettled([
                 this.fetchUsers(),
-                this.fetchFeatureUsage(),
-                this.fetchSubscribtions(),
-                this.fetchSubscribtionsCount()
+                this.fetchSubscribtions()
             ]);
         } catch (error) {
+            this.showSpinner = false;
+            this.errorMessage = 'An error occured while trying to load the data'
+        }
+    }
+
+    public sortData(column: string){
+        try{
+            this.loadingMessage = "Loading data please wait....";
+            this.showSpinner = true;
+            if (this.sortColumn === column) {
+               this.sortDirection =  this.sortDirection === 'asc' ? 'desc' : 'asc';
+              } else {
+                this.sortColumn = column;
+                this.sortDirection = 'asc';
+              }
+              this.setQueryParams(this.colsNameParam,column).then(() => this.setQueryParams(this.sortDirectionParams,this.sortDirection));
+              this.fetchUsers().then(() => this.showSpinner = false);
+        }catch(error){
             this.showSpinner = false;
             this.errorMessage = 'An error occured while trying to load the data'
         }
@@ -89,23 +100,22 @@ export class UsersComponent implements OnInit, OnDestroy {
         try {
             const subscriptions = await firstValueFrom(this.subsService.getSubscriptions());
             this.subscriptionTypes = subscriptions.reduce((subs, sub, i) => {
-                subs[i] = {
-                ...sub,
-                id: i,
-                badge: this.getSubBadge(sub.name)
-              };
+                subs[sub.name] = this.getSubBadge(sub.name);
               return subs;
-            }, {} as { [key: number]: SubscriptionType });
-            this.subsKeys = Object.keys(this.subscriptionTypes).map(key => +key);
+            }, {} as { [key: string]: string });
         } catch (err) {
             this.errorMessage = getErrorResponseMessage(err as HttpErrorResponse);
         }
     }
+    subscriptionKeys(): string[] {
+        return Object.keys(this.subscriptionTypes);
+      }
     private async fetchUsers(): Promise<void> {
         try {
             const currentPage = this.getQueryParam(this.usersPageParam,this.pagination.currentPage);
             const pageSize = this.getQueryParam(this.usersPageSizeParam,this.pagination.pageSize);
-            const pagedUsers = await firstValueFrom(this.userService.getUsersDetails(currentPage ?? this.pagination.currentPage,pageSize ?? this.pagination.pageSize));
+            const pagedUsers = await firstValueFrom(
+                this.userService.getUsersDetails(currentPage ?? this.pagination.currentPage,pageSize ?? this.pagination.pageSize,this.sortDirection ?? '',this.sortColumn ?? ''));
             this.setPagination<UserDetail>(this.pagination, pagedUsers);
             pagedUsers.data.forEach(u => {
                 const date = new Date(u.subscriptionExpirationDate);
@@ -120,25 +130,6 @@ export class UsersComponent implements OnInit, OnDestroy {
             this.errorMessage = getErrorResponseMessage(err as HttpErrorResponse);
         }
     }
-    private async fetchSubscribtionsCount() : Promise<void> {
-        try{
-              const subsCounts =  await firstValueFrom(this.subsService.getSubscribtionsCount());
-              this.subsUsersCount = subsCounts;
-        }catch(err){
-            this.errorMessage = getErrorResponseMessage(err as HttpErrorResponse);
-        }
-    }
-    private async fetchFeatureUsage() : Promise<void> {
-        try {
-            const currentPage = this.getQueryParam(this.featurePageParam,this.featurePagination.currentPage);
-            const pageSize = this.getQueryParam(this.featurePageSizeParam,this.featurePagination.pageSize);
-            const pagedFeatures = await firstValueFrom(this.userService.getFeaturesUsage(currentPage ?? this.featurePagination.currentPage,pageSize ?? this.featurePagination.pageSize));
-            this.setPagination<FeatureUsage>(this.featurePagination,pagedFeatures);
-            this.featureUsage = pagedFeatures.data;
-        } catch (err) {
-            this.errorMessage = getErrorResponseMessage(err as HttpErrorResponse);
-        }
-    }
     private getSubBadge(name : string) : string {
         var badge = 'badge text-bg-info';
         switch(name){
@@ -148,7 +139,7 @@ export class UsersComponent implements OnInit, OnDestroy {
                     case 'ENTERPRISE':
                     badge= 'badge text-bg-success';
                     break;
-                    case 'TRAIL':
+                    case 'TRIAL':
                     badge= 'badge text-bg-warning';
                     break;
                     case 'INTERNAL':
@@ -164,14 +155,13 @@ export class UsersComponent implements OnInit, OnDestroy {
     }
 
     setPageFromQueryParams(): void {
-        let usersPage: number = this.getQueryParam(this.usersPageParam,this.pagination.currentPage);
+        let usersPage: number = this.parseNumber(this.getQueryParam(this.usersPageParam,this.pagination.currentPage));
         this.pagination.currentPage = usersPage;
-        let featurePage: number = this.getQueryParam(this.featurePageParam,this.featurePagination.currentPage);
-        this.featurePagination.currentPage = featurePage;
-        let usersPageSize : number = this.getQueryParam(this.usersPageSizeParam,this.pagination.pageSize);
+        let usersPageSize : number = this.parseNumber(this.getQueryParam(this.usersPageSizeParam,this.pagination.pageSize));
         this.pagination.pageSize = usersPageSize;
-        let featurePageSize : number = this.getQueryParam(this.featurePageSizeParam,this.featurePagination.pageSize);
-        this.featurePagination.pageSize = featurePageSize;
+        this.sortColumn = this.getQueryParam(this.colsNameParam,'');
+        console.log(this.sortColumn);
+        this.sortDirection = this.getQueryParam(this.sortDirectionParams,'');
     }
 
     paginationExists(pagination : Pagination ): boolean {
@@ -180,7 +170,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     onEditChange(event: any): void {
         this.isEditing = event.target.checked;
     }
-    setQueryParams(param : string,value : number) : Promise<boolean>{
+    setQueryParams(param : string,value : any) : Promise<boolean>{
        return this.router.navigate([], {
             relativeTo: this.activatedRoute,
             queryParams: { [param]: value },
@@ -209,13 +199,6 @@ export class UsersComponent implements OnInit, OnDestroy {
                     this.showSpinner = false;
                });
         }
-    }
-    featurePageChange(newPage : number) : void {
-        this.setQueryParams(this.featurePageParam,newPage).then(async () => {
-                this.showSpinner = true;
-                await this.fetchFeatureUsage();
-                this.showSpinner = false;
-           });
     }
     getSubscriptionStatus(expirationDate: string): { status: string; class: string } {
         if (!expirationDate) 
@@ -280,18 +263,13 @@ export class UsersComponent implements OnInit, OnDestroy {
             this.showSpinner = false;
         });
      }
-     onFeaturePageSizeChanged(event: any){
-        this.featurePagination.pageSize = event.target.value;
-        this.setQueryParams(this.featurePageSizeParam,this.featurePagination.pageSize).then(async () => {
-            this.showSpinner = true;
-            await this.fetchFeatureUsage();
-            this.showSpinner = false;
-        });
-     }
-     getQueryParam(param: string,defaultValue: number) : number {
+     getQueryParam(param: string,defaultValue: any) : any {
         const params = this.activatedRoute.snapshot.queryParamMap;
-        const pageParam = params.get(param);
-        return pageParam ? parseInt(pageParam, 10) : defaultValue;
+        return params.get(param) ?? defaultValue;
+    }
+
+    parseNumber(value: any,defaultValue : number = 10): number{
+        return value ? parseInt(value, 10) : defaultValue;
     }
 }
 

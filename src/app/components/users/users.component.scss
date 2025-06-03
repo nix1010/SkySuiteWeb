@@ -24,7 +24,9 @@ thead th {
     color: white;
     z-index: 1;
 }
-
+.sortable{
+    cursor: pointer;
+}
   
   /* Style for the outer border of tables */
   .outer-border {

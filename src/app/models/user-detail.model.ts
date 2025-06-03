@@ -1,7 +1,7 @@
 import {UserOverview} from "./user-overview.model";
 
 export class UserDetail extends UserOverview {
-    subscription: number;
+    subscription: string;
     subscriptionExpirationDate: string;
     creationDate:string;
     mobilePhone: string;

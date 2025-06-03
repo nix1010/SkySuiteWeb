@@ -23,11 +23,13 @@ export class UserService {
             }
         });
     }
-    public getUsersDetails(pageNumber: number, pageSize: number): Observable<PagedResponse<UserDetail>> {
+    public getUsersDetails(pageNumber: number, pageSize: number,direction: string = 'desc',column:string = ''): Observable<PagedResponse<UserDetail>> {
         return this.httpClient.get<PagedResponse<UserDetail>>(this.baseUrl, {
             params: {
                 pageNumber: pageNumber,
-                pageSize: pageSize
+                pageSize: pageSize,
+                sortCriteria  : column,
+                sortDirection : direction
             }
         });
     }

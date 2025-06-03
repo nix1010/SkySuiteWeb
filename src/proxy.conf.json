@@ -1,7 +1,7 @@
 {
-	"/api": {
-		"target": "https://skysuite-api-dev.wonderfulriver-db6cedb8.eastus.azurecontainerapps.io",
-		"changeOrigin": true,
-		"logLevel": "info"
-	}
+  "/api": {
+    "target": "https://skysuite-api-dev.wonderfulriver-db6cedb8.eastus.azurecontainerapps.io",
+    "changeOrigin": true,
+    "logLevel": "info"
+  }
 }
