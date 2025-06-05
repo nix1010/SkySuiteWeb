@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit } from '@angular/core';
+import {Component, DestroyRef, OnDestroy, OnInit } from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {NgbAlert, NgbPagination} from "@ng-bootstrap/ng-bootstrap";
 import {NgForOf, NgIf,CommonModule } from "@angular/common";
@@ -14,7 +14,7 @@ import {catchError} from "rxjs/operators";
 import { SubscriptionService } from '../../services/subscription.service';
 import { AlertModalService } from '../../services/alert.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DESC_DIRECTION } from '../../config/constants';
+import { ASC_DIRECTION, CREATIONDATE_COL, DESC_DIRECTION } from '../../config/constants';
 
 @Component({
     selector: 'app-users',
@@ -44,7 +44,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     protected loadingMessage:string = "Loading please wait...";
     subscriptionTypes: { [key: string]: string } = {};
     protected sortDirection : string = DESC_DIRECTION;
-    protected sortColumn : string = '';
+    protected sortColumn : string = CREATIONDATE_COL;
     private readonly usersPageSizeParam = 'usersPageSize';
     private readonly usersPageParam = 'usersPage';
     private readonly colsNameParam = 'col';
@@ -84,10 +84,10 @@ export class UsersComponent implements OnInit, OnDestroy {
             this.loadingMessage = "Loading data please wait....";
             this.showSpinner = true;
             if (this.sortColumn === column) {
-               this.sortDirection =  this.sortDirection === 'asc' ? 'desc' : 'asc';
+               this.sortDirection =  this.sortDirection === ASC_DIRECTION ? DESC_DIRECTION : ASC_DIRECTION;
               } else {
                 this.sortColumn = column;
-                this.sortDirection = 'asc';
+                this.sortDirection = DESC_DIRECTION;
               }
               this.setQueryParams(this.colsNameParam,column).then(() => this.setQueryParams(this.sortDirectionParams,this.sortDirection));
               this.fetchUsers().then(() => this.showSpinner = false);
@@ -115,7 +115,7 @@ export class UsersComponent implements OnInit, OnDestroy {
             const currentPage = this.getQueryParam(this.usersPageParam,this.pagination.currentPage);
             const pageSize = this.getQueryParam(this.usersPageSizeParam,this.pagination.pageSize);
             const pagedUsers = await firstValueFrom(
-                this.userService.getUsersDetails(currentPage ?? this.pagination.currentPage,pageSize ?? this.pagination.pageSize,this.sortDirection ?? '',this.sortColumn ?? ''));
+                this.userService.getUsersDetails(currentPage ?? this.pagination.currentPage,pageSize ?? this.pagination.pageSize,this.sortDirection ?? DESC_DIRECTION,this.sortColumn ?? CREATIONDATE_COL));
             this.setPagination<UserDetail>(this.pagination, pagedUsers);
             pagedUsers.data.forEach(u => {
                 const date = new Date(u.subscriptionExpirationDate);
@@ -159,9 +159,8 @@ export class UsersComponent implements OnInit, OnDestroy {
         this.pagination.currentPage = usersPage;
         let usersPageSize : number = this.parseNumber(this.getQueryParam(this.usersPageSizeParam,this.pagination.pageSize));
         this.pagination.pageSize = usersPageSize;
-        this.sortColumn = this.getQueryParam(this.colsNameParam,'');
-        console.log(this.sortColumn);
-        this.sortDirection = this.getQueryParam(this.sortDirectionParams,'');
+        this.sortColumn = this.getQueryParam(this.colsNameParam,CREATIONDATE_COL);
+        this.sortDirection = this.getQueryParam(this.sortDirectionParams,DESC_DIRECTION);
     }
 
     paginationExists(pagination : Pagination ): boolean {

@@ -33,7 +33,11 @@
               {{ sortDirection === "asc" ? "▲" : "▼" }}
             </span>
           </th>
-          <th scope="col" (click)="sortData('creationDate')" class="sortable">
+          <th
+            scope="col"
+            (click)="sortData('creationDate')"
+            class="sortable minWidthCreationDate"
+          >
             Creation Date
             <span *ngIf="sortColumn === 'creationDate'">
               {{ sortDirection === "asc" ? "▲" : "▼" }}
@@ -42,7 +46,7 @@
           <th
             scope="col"
             (click)="sortData('subscriptionExpiration')"
-            class="sortable"
+            class="sortable minWidth"
           >
             Subscription Expiration
             <span *ngIf="sortColumn === 'subscriptionExpiration'">
@@ -88,7 +92,7 @@
             </div>
             <div *ngIf="!isEditing" class="hstack">
               <span class="me-2">{{
-                user.subscriptionExpirationDate | date : "yyyy-MM-dd"
+                user.subscriptionExpirationDate | date : "mediumDate"
               }}</span>
               <span
                 [class]="

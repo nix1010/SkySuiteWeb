@@ -33,3 +33,13 @@ thead th {
     border: 1px solid #dee2e6;
     border-radius: 0.25rem;
   }
+
+.minWidth{
+    width: 200px;
+    min-width: 200px;
+}  
+
+.minWidthCreationDate{
+    min-width: 140px;
+    width: 140px;
+}
