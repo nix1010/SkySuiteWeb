@@ -10,13 +10,13 @@ export class SubscriptionService {
 
     constructor(
         private readonly httpClient: HttpClient
-    ) {}
+    ) { }
 
     public getSubscriptions(): Observable<SubscriptionType[]> {
         return this.httpClient.get<SubscriptionType[]>(this.baseUrl);
     }
-     public getSubscribtionsCount() : Observable<SubscriptionsCount[]>{
-       
-            return this.httpClient.get<SubscriptionsCount[]>(`${this.baseUrl}/user-counts`);
+
+    public getSubscribtionsCount(): Observable<SubscriptionsCount[]> {
+        return this.httpClient.get<SubscriptionsCount[]>(`${this.baseUrl}/user-counts`);
     }
 }

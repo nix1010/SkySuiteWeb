@@ -68,14 +68,14 @@
                 aria-label="Page Size"
                 (ngModelChange)="changedUsers(user.id)"
               >
-                <option *ngFor="let key of subscriptionKeys()" [value]="key">
-                  {{ key }}
+                <option *ngFor="let subscription of subscriptions" [value]="subscription.id">
+                  {{ subscription.name }}
                 </option>
               </select>
             </div>
             <div *ngIf="!isEditing">
-              <span [class]="subscriptionTypes[user.subscription]">
-                {{ user.subscription || "Unknown" }}</span
+              <span [class]="user.subscription | transformPipe: getSubscriptionBadgeForId:this.subscriptions">
+                {{ user.subscription | transformPipe: getSubscriptionNameForId:this.subscriptions }}</span
               >
             </div>
           </td>
