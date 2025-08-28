@@ -80,6 +80,11 @@ export class DashboardComponent implements OnInit,OnDestroy {
           try{
                 const subsCounts =  await firstValueFrom(this.subsService.getSubscribtionsCount());
                 this.subsUsersCount = subsCounts;
+                var sum = this.subsUsersCount.reduce((sum, subs) => sum + subs.userCount, 0);
+                this.subsUsersCount.push({ 
+                                            subscriptionName : "Total Subscriptions",
+                                            userCount : sum
+                });
           }catch(err){
               this.errorMessage = getErrorResponseMessage(err as HttpErrorResponse);
           }
