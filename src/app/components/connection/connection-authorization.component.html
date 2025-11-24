@@ -1,0 +1,14 @@
+<div *ngIf="isConnectionSuccess" class="alert alert-success mt-5 text-center container" role="alert">
+	Authorization complete. You may now safely close this page or your browser.
+</div>
+
+<div *ngIf="errorMessage" class="alert alert-danger mt-5 text-center container" role="alert">
+	{{ errorMessage }}
+</div>
+
+<div *ngIf="isConnectionCanceled" class="alert alert-info mt-5 text-center container" role="alert">
+	You have closed the authorization dialog. If authorization was successful, you may safely close this page or browser. Otherwise,
+	please restart the process.
+</div>
+
+<app-load-spinner *ngIf="isLoading"/>

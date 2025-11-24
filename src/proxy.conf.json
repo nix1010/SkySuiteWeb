@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://skysuite-api-dev.wonderfulriver-db6cedb8.eastus.azurecontainerapps.io",
+    "target": "http://192.168.56.1:5000",
     "changeOrigin": true,
     "logLevel": "info"
   }

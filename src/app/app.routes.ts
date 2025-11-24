@@ -8,6 +8,7 @@ import {UsersComponent} from "./components/users/users.component";
 import {Role} from "./models/authentication/role.model";
 import {UserComponent} from "./components/user/user.component";
 import {MainLayoutComponent} from "./components/main-layout/main-layout.component";
+import {ConnectionAuthorizationComponent} from "./components/connection/connection-authorization.component";
 
 export const routes: Routes = [
     {
@@ -45,6 +46,10 @@ export const routes: Routes = [
     {
         path: ComponentRoutes.LOGIN,
         component: LoginComponent
+    },
+    {
+        path: ComponentRoutes.CONNECTION_AUTHORIZATION,
+        component: ConnectionAuthorizationComponent
     },
     {
         path: '**',
