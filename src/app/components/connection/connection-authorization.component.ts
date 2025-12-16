@@ -1,3 +1,4 @@
+import {HttpClient} from '@angular/common/http';
 import {AfterContentInit, Component} from '@angular/core';
 import Nango, {ConnectUIEvent} from "@nangohq/frontend";
 import {ActivatedRoute} from "@angular/router";
@@ -21,7 +22,8 @@ export class ConnectionAuthorizationComponent implements AfterContentInit {
     protected errorMessage: string;
 
     constructor(
-        private readonly route: ActivatedRoute
+        private readonly route: ActivatedRoute,
+        private readonly httpClient: HttpClient
     ) {
         this.nango = new Nango();
     }
@@ -34,21 +36,29 @@ export class ConnectionAuthorizationComponent implements AfterContentInit {
             return;
         }
 
+        const statusCallbackUri: string | null = this.route.snapshot.queryParamMap.get("statusCallbackUri");
+
         this.nango.openConnectUI({
             sessionToken: sessionToken,
-            onEvent: (event: ConnectUIEvent) => this.onConnectEvent(event)
+            onEvent: (event: ConnectUIEvent) => this.onConnectEvent(event, statusCallbackUri)
         });
     }
 
-    private onConnectEvent(event: ConnectUIEvent): void {
+    private onConnectEvent(event: ConnectUIEvent, statusCallbackUri: string | null): void {
         if (event.type === 'ready') {
             this.isLoading = false;
-        } else if (event.type === 'connect') {
-            this.isConnectionSuccess = true;
-        } else if (event.type === 'close') {
-            this.isConnectionCanceled = true;
-        } else if (event.type === 'error') {
-            this.errorMessage = 'An error occurred during authorization. Please try again or contact support if the issue persists.';
+        } else {
+            if (statusCallbackUri) {
+                this.httpClient.post(statusCallbackUri, {eventType: event.type}).subscribe();
+            }
+            
+            if (event.type === 'connect') {
+                this.isConnectionSuccess = true;
+            } else if (event.type === 'close') {
+                this.isConnectionCanceled = true;
+            } else if (event.type === 'error') {
+                this.errorMessage = 'An error occurred during authorization. Please try again or contact support if the issue persists.';
+            }
         }
     }
 }
