@@ -1,9 +1,10 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpContext} from '@angular/common/http';
 import {AfterContentInit, Component} from '@angular/core';
 import Nango, {ConnectUIEvent} from "@nangohq/frontend";
 import {ActivatedRoute} from "@angular/router";
 import {NgIf} from "@angular/common";
 import {LoadSpinnerComponent} from "../load-spinner/load-spinner.component";
+import {SKIP_INTERCEPTOR} from "../../interceptors/http-interceptor";
 
 @Component({
     selector: 'app-connection-authorization',
@@ -49,9 +50,11 @@ export class ConnectionAuthorizationComponent implements AfterContentInit {
             this.isLoading = false;
         } else {
             if (statusCallbackUri) {
-                this.httpClient.post(statusCallbackUri, {eventType: event.type}).subscribe();
+                this.httpClient.post(statusCallbackUri, {eventType: event.type}, {
+                    context: new HttpContext().set(SKIP_INTERCEPTOR, true)
+                }).subscribe();
             }
-            
+
             if (event.type === 'connect') {
                 this.isConnectionSuccess = true;
             } else if (event.type === 'close') {
