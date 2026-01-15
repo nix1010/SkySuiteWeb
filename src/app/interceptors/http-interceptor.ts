@@ -7,7 +7,7 @@ import {environment} from "../../environments/environment";
 import {URI_PREFIX} from "../config/routes";
 
 
-export const SKIP_INTERCEPTOR: HttpContextToken<boolean> = new HttpContextToken<boolean>(() => true);
+export const SKIP_INTERCEPTOR: HttpContextToken<boolean> = new HttpContextToken<boolean>(() => false);
 
 @Injectable()
 export class HttpRequestInterceptor implements HttpInterceptor {
